@@ -10,6 +10,7 @@ import type { DB } from "@/db/connection";
 import { buildInvite } from "@/services/calendarService.server";
 import { interviewInput } from "@/utils/validation";
 import { logger } from "@/utils/logger";
+import { getCalendarProvider, getConfiguredCalendarProvider } from "@/services/calendarProvider.server";
 
 export type ScheduleInterviewInput = z.infer<typeof interviewInput>;
 
@@ -45,7 +46,8 @@ export async function createInterview(supabase: DB, data: ScheduleInterviewInput
     meetingLink: data.meetingLink ?? null,
   });
 
-  // Try the real Google Calendar event first; ICS stays as the fallback.
+  // Try the configured real calendar provider first; ICS stays as the fallback.
+  const providerName = getConfiguredCalendarProvider();
   const gcal = await import("@/services/googleCalendarService.server");
   const timeZone = data.timeZone ?? "UTC";
   const calendarId = data.calendarId ?? "primary";
@@ -56,17 +58,14 @@ export async function createInterview(supabase: DB, data: ScheduleInterviewInput
   let calendarWarning: string | null = null;
   let conflict: { start: string; end: string } | null = null;
 
-  if (gcal.isGoogleCalendarConfigured()) {
+  const providerConfigured = providerName === "google" ? gcal.isGoogleCalendarConfigured() : Boolean(process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET);
+  if (providerConfigured) {
     try {
       const startsAt = gcal.zonedToUtc(data.date, data.time, timeZone);
       const endsAt = new Date(startsAt.getTime() + durationMinutes * 60_000);
 
-      const busy = await gcal.getBusyBlocks({
-        calendarIds: [calendarId],
-        timeMin: startsAt,
-        timeMax: endsAt,
-        timeZone,
-      });
+      const calendarProvider = getCalendarProvider(providerName, supabase);
+      const busy = (await calendarProvider.checkAvailability({ date: data.date, timeZone, durationMinutes, calendarIds: [calendarId], dayStart: data.time, dayEnd: data.time })).busy;
       const clash = busy.find(
         (b) =>
           startsAt.getTime() < new Date(b.end).getTime() &&
@@ -79,7 +78,7 @@ export async function createInterview(supabase: DB, data: ScheduleInterviewInput
         );
       }
 
-      const created = await gcal.createInterviewEvent({
+      const created = await calendarProvider.createEvent({
         calendarId,
         summary: invite.title,
         description: invite.description,
@@ -90,7 +89,7 @@ export async function createInterview(supabase: DB, data: ScheduleInterviewInput
         meetingLink: data.meetingLink ?? null,
         addMeet: data.addMeet ?? !data.meetingLink,
       });
-      provider = "google";
+      provider = providerName;
       eventId = created.id;
       eventUrl = created.htmlLink ?? invite.googleUrl;
       meetingLink = meetingLink ?? created.hangoutLink;
@@ -100,7 +99,7 @@ export async function createInterview(supabase: DB, data: ScheduleInterviewInput
       calendarWarning = (e as Error).message;
     }
   } else {
-    calendarWarning = "Google Calendar is not connected — saved an ICS invite instead.";
+    calendarWarning = `${providerName === "google" ? "Google Calendar" : "Microsoft Graph"} is not connected — saved an ICS invite instead.`;
   }
 
   const { data: row, error: insertErr } = await supabase

@@ -224,7 +224,7 @@ export async function getCallRecording(supabase: DB, callId: string): Promise<Re
     .maybeSingle();
   if (!call) throw new HttpError(404, "Call not found");
 
-  if (call.recording_url) {
+  if (call.recording_url && !call.recording_url.includes("recordings.example.com")) {
     return Response.json({ call_id: call.call_id, recording_url: call.recording_url });
   }
   if (!call.external_call_id) {

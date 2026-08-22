@@ -35,7 +35,7 @@ export function AppShell({
       <Sidebar email={user.email ?? null} />
       <div className="flex min-w-0 flex-1 flex-col">
         <Navbar title={title} subtitle={subtitle} actions={actions} />
-        <main className="flex-1 px-6 py-6">{children}</main>
+        <main className="min-w-0 flex-1 px-4 py-4 sm:px-6 sm:py-6">{children}</main>
       </div>
     </div>
   );

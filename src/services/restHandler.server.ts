@@ -13,6 +13,7 @@ import { authenticateRequest, jsonError, HttpError } from "@/services/callApiSer
 import { checkRateLimit, clientKey } from "@/middleware/rateLimiter.server";
 import { preflight, withSecurityHeaders } from "@/middleware/security";
 import { recordAudit, requestMeta } from "@/middleware/audit.server";
+import { requireRole, type UserRole } from "@/middleware/rbac.server";
 
 export { preflight, HttpError };
 
@@ -23,7 +24,7 @@ export async function restRoute(
   request: Request,
   scope: string,
   handler: (ctx: RestContext) => Promise<Response>,
-  options: { limit?: number; windowSeconds?: number } = {},
+  options: { limit?: number; windowSeconds?: number; roles?: UserRole[] } = {},
 ): Promise<Response> {
   try {
     const limit = await checkRateLimit(
@@ -42,6 +43,7 @@ export async function restRoute(
     }
 
     const supabase = await authenticateRequest(request);
+    if (options.roles) await requireRole(supabase, options.roles);
     return withSecurityHeaders(request, await handler({ request, supabase }));
   } catch (e) {
     return withSecurityHeaders(request, jsonError(e));

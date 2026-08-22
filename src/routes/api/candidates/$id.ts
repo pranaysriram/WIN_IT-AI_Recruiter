@@ -41,7 +41,7 @@ export const Route = createFileRoute("/api/candidates/$id")({
             details: { fields: Object.keys(input) },
           });
           return Response.json(candidate);
-        }),
+        }, { roles: ["admin", "recruiter"] }),
 
       DELETE: async ({ request, params }) =>
         restRoute(request, "candidates-write", async ({ supabase }) => {
@@ -53,7 +53,7 @@ export const Route = createFileRoute("/api/candidates/$id")({
             resourceId: id,
           });
           return Response.json(result);
-        }),
+        }, { roles: ["admin", "recruiter"] }),
     },
   },
 });

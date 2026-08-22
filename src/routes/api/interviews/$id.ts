@@ -38,7 +38,7 @@ export const Route = createFileRoute("/api/interviews/$id")({
             details: { fields: Object.keys(input) },
           });
           return Response.json(interview);
-        }),
+        }, { roles: ["admin", "recruiter"] }),
 
       // Cancellation reuses the shared service so the calendar event is
       // removed exactly as it is from the dashboard.
@@ -52,7 +52,7 @@ export const Route = createFileRoute("/api/interviews/$id")({
             resourceId: id,
           });
           return Response.json(result);
-        }),
+        }, { roles: ["admin", "recruiter"] }),
     },
   },
 });

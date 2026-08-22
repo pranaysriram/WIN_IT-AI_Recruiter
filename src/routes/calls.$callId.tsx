@@ -200,7 +200,7 @@ function CallDetail() {
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-sm font-semibold">Transcript</h2>
             <div className="flex items-center gap-3">
-              {call?.recording_url ? (
+              {call?.recording_url && !call.recording_url.includes("recordings.example.com") ? (
                 <>
                   <a
                     href={call.recording_url}

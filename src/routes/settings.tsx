@@ -241,7 +241,7 @@ function AtsSettingsSection() {
         <div>
           <h2 className="text-lg font-semibold">ATS sync</h2>
           <p className="text-sm text-muted-foreground">
-            Push screened candidates and their answers into Greenhouse, Lever or your own endpoint.
+            Push screened candidates and their answers into Greenhouse, Lever, Zoho Recruit or your own endpoint.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -266,6 +266,7 @@ function AtsSettingsSection() {
           >
             <option value="greenhouse">Greenhouse</option>
             <option value="lever">Lever</option>
+            <option value="zoho_recruit">Zoho Recruit</option>
             <option value="custom">Custom webhook</option>
           </select>
         </div>
@@ -287,7 +288,7 @@ function AtsSettingsSection() {
             placeholder="https://harvest.greenhouse.io/v1"
           />
           <p className="text-xs text-muted-foreground">
-            The ATS API key is stored as a server secret (ATS_API_KEY) and never exposed to the browser.
+            Greenhouse, Lever and custom webhooks use ATS_API_KEY. Zoho Recruit uses the OAuth connection endpoints and server-side refresh-token storage.
           </p>
         </div>
       </div>

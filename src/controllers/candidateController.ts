@@ -40,7 +40,7 @@ export const syncCandidateToAts = createServerFn({ method: "POST" })
       response_value: r.response_value ?? "",
     }));
 
-    const result = await pushCandidate(settings, candidate, screening);
+    const result = await pushCandidate(settings, candidate, screening, supabase);
 
     if (result.synced) {
       await supabase

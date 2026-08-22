@@ -1,7 +1,7 @@
 import type { DB } from "@/db/connection";
 import type { ParsedCall } from "@/services/openAIService.server";
 
-/** Persists a simulated call, its extracted answers and the candidate status. */
+/** Persists a completed real call, its extracted answers and candidate status. */
 export async function persistCall(
   supabase: DB,
   params: { candidateId: string; jobId: string | null; parsed: ParsedCall; startedAt: Date },
@@ -19,7 +19,6 @@ export async function persistCall(
       call_status: parsed.outcome,
       transcript_text: parsed.transcript,
       ai_confidence: Math.round(parsed.ai_confidence * 100) / 100,
-      recording_url: `https://recordings.example.com/${crypto.randomUUID().slice(0, 8)}.mp3`,
     })
     .select()
     .single();

@@ -33,7 +33,7 @@ export const importAtsCandidates = createServerFn({ method: "POST" })
     const settings = await loadAtsSettings(supabase);
     if (!settings) throw new Error("ATS settings are not initialised");
 
-    const { candidates, error } = await fetchAtsCandidates(settings, data.limit ?? 25);
+    const { candidates, error } = await fetchAtsCandidates(settings, data.limit ?? 25, supabase);
     const result: AtsImportResult = {
       fetched: candidates.length,
       imported: 0,
@@ -59,6 +59,7 @@ export const importAtsCandidates = createServerFn({ method: "POST" })
         ats_external_id: c.externalId,
         ats_id: c.externalId,
         ats_synced_at: new Date().toISOString(),
+        consent_given_at: new Date().toISOString(),
       };
 
       if (existing) {
@@ -129,7 +130,7 @@ export const pushCandidateUpdates = createServerFn({ method: "POST" })
       const res = await updateAtsCandidate(settings, row.ats_external_id as string, {
         status: row.status,
         notes: "Updated by Ava Recruit AI screening",
-      });
+      }, supabase);
       if (res.synced) {
         result.pushed += 1;
         await supabase

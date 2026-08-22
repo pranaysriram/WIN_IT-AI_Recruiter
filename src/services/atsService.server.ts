@@ -7,6 +7,7 @@
 import type { DB } from "@/db/connection";
 import { logger } from "@/utils/logger";
 import { fetchWithRetry } from "@/utils/retry";
+import type { AtsProvider } from "@/services/atsProvider.server";
 
 export type AtsSettings = {
   provider: string;
@@ -44,8 +45,15 @@ export async function pushCandidate(
   settings: AtsSettings,
   candidate: CandidatePayload,
   screening: { question_code: string; response_value: string }[],
+  db?: DB,
 ): Promise<AtsResult> {
   if (!settings.enabled) return { synced: false, externalId: null, reason: "ATS sync is turned off" };
+  if (settings.provider === "zoho_recruit") {
+    if (!db) return { synced: false, externalId: null, reason: "Zoho Recruit requires an authenticated provider context" };
+    const { getAtsProvider } = await import("@/services/atsProvider.server");
+    const notes = screening.map((s) => `${s.question_code}: ${s.response_value}`).join("\n");
+    return getAtsProvider(settings.provider, db)!.updateCandidate(candidate.ats_external_id ?? "", { status: candidate.status, notes });
+  }
   const key = atsApiKey();
   if (!key) {
     return {
@@ -139,8 +147,13 @@ function asString(v: unknown): string | null {
 export async function fetchAtsCandidates(
   settings: AtsSettings,
   limit = 50,
+  db?: DB,
 ): Promise<Fetched> {
   if (!settings.enabled) return { candidates: [], error: "ATS sync is turned off" };
+  if (settings.provider === "zoho_recruit") {
+    if (!db) return { candidates: [], error: "Zoho Recruit requires an authenticated provider context" };
+    return getZohoCandidates(db, limit);
+  }
   const key = atsApiKey();
   if (!key) return { candidates: [], error: "ATS_API_KEY is not set. Add the key, then retry." };
 
@@ -223,8 +236,14 @@ export async function updateAtsCandidate(
   settings: AtsSettings,
   externalId: string,
   patch: { status: string; notes?: string },
+  db?: DB,
 ): Promise<AtsResult> {
   if (!settings.enabled) return { synced: false, externalId, reason: "ATS sync is turned off" };
+  if (settings.provider === "zoho_recruit") {
+    if (!db) return { synced: false, externalId, reason: "Zoho Recruit requires an authenticated provider context" };
+    const { getAtsProvider } = await import("@/services/atsProvider.server");
+    return getAtsProvider(settings.provider, db)!.updateCandidate(externalId, patch);
+  }
   const key = atsApiKey();
   if (!key) return { synced: false, externalId, reason: "ATS_API_KEY is not set." };
 
@@ -256,4 +275,9 @@ export async function updateAtsCandidate(
     return { synced: false, externalId, reason: `ATS responded ${res.status}: ${text.slice(0, 200)}` };
   }
   return { synced: true, externalId, reason: null };
+}
+
+async function getZohoCandidates(db: DB, limit: number): Promise<Fetched> {
+  const { getAtsProvider } = await import("@/services/atsProvider.server");
+  return getAtsProvider("zoho_recruit", db)!.fetchCandidates(limit);
 }

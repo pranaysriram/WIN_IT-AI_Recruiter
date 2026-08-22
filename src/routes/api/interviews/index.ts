@@ -27,7 +27,7 @@ export const Route = createFileRoute("/api/interviews/")({
             details: { provider: result.provider },
           });
           return Response.json(result, { status: 201 });
-        }),
+        }, { roles: ["admin", "recruiter"] }),
     },
   },
 });

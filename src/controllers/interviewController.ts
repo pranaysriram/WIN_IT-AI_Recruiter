@@ -3,18 +3,20 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/middleware/auth";
 import { interviewInput, availabilityInput, uuid } from "@/utils/validation";
 import { cancelInterviewById, createInterview } from "@/services/interviewService.server";
+import { getConfiguredCalendarProvider, getCalendarProvider } from "@/services/calendarProvider.server";
 
-/** Is Google Calendar linked, and which calendars can we book into? */
+/** Is the configured calendar provider linked? */
 export const getCalendarStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async () => {
-    const gcal = await import("@/services/googleCalendarService.server");
-    if (!gcal.isGoogleCalendarConfigured()) {
-      return { connected: false, calendars: [] as Array<{ id: string; summary: string; primary: boolean }> };
+    const providerName = getConfiguredCalendarProvider();
+    if (providerName === "google") {
+      const gcal = await import("@/services/googleCalendarService.server");
+      if (!gcal.isGoogleCalendarConfigured()) return { connected: false, calendars: [] as Array<{ id: string; summary: string; primary: boolean }> };
+      try { return { connected: true, calendars: await gcal.listCalendars() }; } catch (e) { return { connected: false, calendars: [], error: (e as Error).message }; }
     }
     try {
-      const calendars = await gcal.listCalendars();
-      return { connected: true, calendars };
+      return { connected: true, calendars: [{ id: "primary", summary: "Microsoft Outlook", primary: true }] };
     } catch (e) {
       console.error("Calendar status failed", e);
       return { connected: false, calendars: [], error: (e as Error).message };
@@ -25,14 +27,11 @@ export const getCalendarStatus = createServerFn({ method: "GET" })
 export const checkAvailability = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data) => availabilityInput.parse(data))
-  .handler(async ({ data }) => {
-    const gcal = await import("@/services/googleCalendarService.server");
-    if (!gcal.isGoogleCalendarConfigured()) {
-      throw new Error("Google Calendar is not connected for this project.");
-    }
+  .handler(async ({ data, context }) => {
+    const provider = getCalendarProvider(getConfiguredCalendarProvider(), context.supabase);
     const timeZone = data.timeZone ?? "UTC";
     const calendarIds = data.calendarIds?.length ? data.calendarIds : ["primary"];
-    const { slots, busy } = await gcal.findAvailableSlots({
+    const { slots, busy } = await provider.checkAvailability({
       date: data.date,
       timeZone,
       durationMinutes: data.durationMinutes ?? 45,

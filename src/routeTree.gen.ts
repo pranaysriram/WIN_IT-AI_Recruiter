@@ -25,19 +25,30 @@ import { Route as CallsCallIdRouteImport } from './routes/calls.$callId'
 import { Route as CandidatesIndexRouteImport } from './routes/candidates.index'
 import { Route as CandidatesCandidateIdRouteImport } from './routes/candidates.$candidateId'
 import { Route as ApiAnalyticsIndexRouteImport } from './routes/api/analytics/index'
+import { Route as ApiAnalyticsCallsRouteImport } from './routes/api/analytics/calls'
+import { Route as ApiAnalyticsCandidatesRouteImport } from './routes/api/analytics/candidates'
 import { Route as ApiCallsInitiateRouteImport } from './routes/api/calls/initiate'
 import { Route as ApiCallsWebhookRouteImport } from './routes/api/calls/webhook'
 import { Route as ApiCandidatesIndexRouteImport } from './routes/api/candidates/index'
 import { Route as ApiCandidatesIdRouteImport } from './routes/api/candidates/$id'
+import { Route as ApiCandidatesUploadRouteImport } from './routes/api/candidates/upload'
+import { Route as ApiCronRetentionRouteImport } from './routes/api/cron/retention'
 import { Route as ApiInterviewsIndexRouteImport } from './routes/api/interviews/index'
 import { Route as ApiInterviewsIdRouteImport } from './routes/api/interviews/$id'
+import { Route as ApiInterviewsAvailabilityRouteImport } from './routes/api/interviews/availability'
 import { Route as ApiJobsIndexRouteImport } from './routes/api/jobs/index'
 import { Route as ApiJobsIdRouteImport } from './routes/api/jobs/$id'
+import { Route as ApiJobsSyncRouteImport } from './routes/api/jobs/sync'
 import { Route as ApiPublicElevenlabsCallRouteImport } from './routes/api/public/elevenlabs-call'
 import { Route as ApiReportsTranscriptsRouteImport } from './routes/api/reports/transcripts'
 import { Route as ApiCallsIdRecordingRouteImport } from './routes/api/calls/$id/recording'
 import { Route as ApiCallsIdStatusRouteImport } from './routes/api/calls/$id/status'
 import { Route as ApiCallsIdTranscriptRouteImport } from './routes/api/calls/$id/transcript'
+import { Route as ApiCandidatesIdExportRouteImport } from './routes/api/candidates/$id/export'
+import { Route as ApiIntegrationsMicrosoftAuthorizeRouteImport } from './routes/api/integrations/microsoft/authorize'
+import { Route as ApiIntegrationsMicrosoftCallbackRouteImport } from './routes/api/integrations/microsoft/callback'
+import { Route as ApiIntegrationsZohoAuthorizeRouteImport } from './routes/api/integrations/zoho/authorize'
+import { Route as ApiIntegrationsZohoCallbackRouteImport } from './routes/api/integrations/zoho/callback'
 import { Route as ApiPublicCallsWebhookRouteImport } from './routes/api/public/calls/webhook'
 
 const IndexRoute = IndexRouteImport.update({
@@ -120,6 +131,16 @@ const ApiAnalyticsIndexRoute = ApiAnalyticsIndexRouteImport.update({
   path: '/api/analytics/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAnalyticsCallsRoute = ApiAnalyticsCallsRouteImport.update({
+  id: '/api/analytics/calls',
+  path: '/api/analytics/calls',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAnalyticsCandidatesRoute = ApiAnalyticsCandidatesRouteImport.update({
+  id: '/api/analytics/candidates',
+  path: '/api/analytics/candidates',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCallsInitiateRoute = ApiCallsInitiateRouteImport.update({
   id: '/api/calls/initiate',
   path: '/api/calls/initiate',
@@ -140,6 +161,16 @@ const ApiCandidatesIdRoute = ApiCandidatesIdRouteImport.update({
   path: '/api/candidates/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCandidatesUploadRoute = ApiCandidatesUploadRouteImport.update({
+  id: '/api/candidates/upload',
+  path: '/api/candidates/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCronRetentionRoute = ApiCronRetentionRouteImport.update({
+  id: '/api/cron/retention',
+  path: '/api/cron/retention',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiInterviewsIndexRoute = ApiInterviewsIndexRouteImport.update({
   id: '/api/interviews/',
   path: '/api/interviews/',
@@ -150,6 +181,12 @@ const ApiInterviewsIdRoute = ApiInterviewsIdRouteImport.update({
   path: '/api/interviews/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiInterviewsAvailabilityRoute =
+  ApiInterviewsAvailabilityRouteImport.update({
+    id: '/api/interviews/availability',
+    path: '/api/interviews/availability',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiJobsIndexRoute = ApiJobsIndexRouteImport.update({
   id: '/api/jobs/',
   path: '/api/jobs/',
@@ -158,6 +195,11 @@ const ApiJobsIndexRoute = ApiJobsIndexRouteImport.update({
 const ApiJobsIdRoute = ApiJobsIdRouteImport.update({
   id: '/api/jobs/$id',
   path: '/api/jobs/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiJobsSyncRoute = ApiJobsSyncRouteImport.update({
+  id: '/api/jobs/sync',
+  path: '/api/jobs/sync',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicElevenlabsCallRoute = ApiPublicElevenlabsCallRouteImport.update({
@@ -185,6 +227,35 @@ const ApiCallsIdTranscriptRoute = ApiCallsIdTranscriptRouteImport.update({
   path: '/api/calls/$id/transcript',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCandidatesIdExportRoute = ApiCandidatesIdExportRouteImport.update({
+  id: '/export',
+  path: '/export',
+  getParentRoute: () => ApiCandidatesIdRoute,
+} as any)
+const ApiIntegrationsMicrosoftAuthorizeRoute =
+  ApiIntegrationsMicrosoftAuthorizeRouteImport.update({
+    id: '/api/integrations/microsoft/authorize',
+    path: '/api/integrations/microsoft/authorize',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIntegrationsMicrosoftCallbackRoute =
+  ApiIntegrationsMicrosoftCallbackRouteImport.update({
+    id: '/api/integrations/microsoft/callback',
+    path: '/api/integrations/microsoft/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIntegrationsZohoAuthorizeRoute =
+  ApiIntegrationsZohoAuthorizeRouteImport.update({
+    id: '/api/integrations/zoho/authorize',
+    path: '/api/integrations/zoho/authorize',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiIntegrationsZohoCallbackRoute =
+  ApiIntegrationsZohoCallbackRouteImport.update({
+    id: '/api/integrations/zoho/callback',
+    path: '/api/integrations/zoho/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCallsWebhookRoute = ApiPublicCallsWebhookRouteImport.update({
   id: '/api/public/calls/webhook',
   path: '/api/public/calls/webhook',
@@ -207,11 +278,17 @@ export interface FileRoutesByFullPath {
   '/candidates/$candidateId': typeof CandidatesCandidateIdRoute
   '/calls/': typeof CallsIndexRoute
   '/candidates/': typeof CandidatesIndexRoute
+  '/api/analytics/calls': typeof ApiAnalyticsCallsRoute
+  '/api/analytics/candidates': typeof ApiAnalyticsCandidatesRoute
   '/api/calls/initiate': typeof ApiCallsInitiateRoute
   '/api/calls/webhook': typeof ApiCallsWebhookRoute
-  '/api/candidates/$id': typeof ApiCandidatesIdRoute
+  '/api/candidates/$id': typeof ApiCandidatesIdRouteWithChildren
+  '/api/candidates/upload': typeof ApiCandidatesUploadRoute
+  '/api/cron/retention': typeof ApiCronRetentionRoute
   '/api/interviews/$id': typeof ApiInterviewsIdRoute
+  '/api/interviews/availability': typeof ApiInterviewsAvailabilityRoute
   '/api/jobs/$id': typeof ApiJobsIdRoute
+  '/api/jobs/sync': typeof ApiJobsSyncRoute
   '/api/public/elevenlabs-call': typeof ApiPublicElevenlabsCallRoute
   '/api/reports/transcripts': typeof ApiReportsTranscriptsRoute
   '/api/analytics/': typeof ApiAnalyticsIndexRoute
@@ -221,6 +298,11 @@ export interface FileRoutesByFullPath {
   '/api/calls/$id/recording': typeof ApiCallsIdRecordingRoute
   '/api/calls/$id/status': typeof ApiCallsIdStatusRoute
   '/api/calls/$id/transcript': typeof ApiCallsIdTranscriptRoute
+  '/api/candidates/$id/export': typeof ApiCandidatesIdExportRoute
+  '/api/integrations/microsoft/authorize': typeof ApiIntegrationsMicrosoftAuthorizeRoute
+  '/api/integrations/microsoft/callback': typeof ApiIntegrationsMicrosoftCallbackRoute
+  '/api/integrations/zoho/authorize': typeof ApiIntegrationsZohoAuthorizeRoute
+  '/api/integrations/zoho/callback': typeof ApiIntegrationsZohoCallbackRoute
   '/api/public/calls/webhook': typeof ApiPublicCallsWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -239,11 +321,17 @@ export interface FileRoutesByTo {
   '/candidates/$candidateId': typeof CandidatesCandidateIdRoute
   '/calls': typeof CallsIndexRoute
   '/candidates': typeof CandidatesIndexRoute
+  '/api/analytics/calls': typeof ApiAnalyticsCallsRoute
+  '/api/analytics/candidates': typeof ApiAnalyticsCandidatesRoute
   '/api/calls/initiate': typeof ApiCallsInitiateRoute
   '/api/calls/webhook': typeof ApiCallsWebhookRoute
-  '/api/candidates/$id': typeof ApiCandidatesIdRoute
+  '/api/candidates/$id': typeof ApiCandidatesIdRouteWithChildren
+  '/api/candidates/upload': typeof ApiCandidatesUploadRoute
+  '/api/cron/retention': typeof ApiCronRetentionRoute
   '/api/interviews/$id': typeof ApiInterviewsIdRoute
+  '/api/interviews/availability': typeof ApiInterviewsAvailabilityRoute
   '/api/jobs/$id': typeof ApiJobsIdRoute
+  '/api/jobs/sync': typeof ApiJobsSyncRoute
   '/api/public/elevenlabs-call': typeof ApiPublicElevenlabsCallRoute
   '/api/reports/transcripts': typeof ApiReportsTranscriptsRoute
   '/api/analytics': typeof ApiAnalyticsIndexRoute
@@ -253,6 +341,11 @@ export interface FileRoutesByTo {
   '/api/calls/$id/recording': typeof ApiCallsIdRecordingRoute
   '/api/calls/$id/status': typeof ApiCallsIdStatusRoute
   '/api/calls/$id/transcript': typeof ApiCallsIdTranscriptRoute
+  '/api/candidates/$id/export': typeof ApiCandidatesIdExportRoute
+  '/api/integrations/microsoft/authorize': typeof ApiIntegrationsMicrosoftAuthorizeRoute
+  '/api/integrations/microsoft/callback': typeof ApiIntegrationsMicrosoftCallbackRoute
+  '/api/integrations/zoho/authorize': typeof ApiIntegrationsZohoAuthorizeRoute
+  '/api/integrations/zoho/callback': typeof ApiIntegrationsZohoCallbackRoute
   '/api/public/calls/webhook': typeof ApiPublicCallsWebhookRoute
 }
 export interface FileRoutesById {
@@ -272,11 +365,17 @@ export interface FileRoutesById {
   '/candidates/$candidateId': typeof CandidatesCandidateIdRoute
   '/calls/': typeof CallsIndexRoute
   '/candidates/': typeof CandidatesIndexRoute
+  '/api/analytics/calls': typeof ApiAnalyticsCallsRoute
+  '/api/analytics/candidates': typeof ApiAnalyticsCandidatesRoute
   '/api/calls/initiate': typeof ApiCallsInitiateRoute
   '/api/calls/webhook': typeof ApiCallsWebhookRoute
-  '/api/candidates/$id': typeof ApiCandidatesIdRoute
+  '/api/candidates/$id': typeof ApiCandidatesIdRouteWithChildren
+  '/api/candidates/upload': typeof ApiCandidatesUploadRoute
+  '/api/cron/retention': typeof ApiCronRetentionRoute
   '/api/interviews/$id': typeof ApiInterviewsIdRoute
+  '/api/interviews/availability': typeof ApiInterviewsAvailabilityRoute
   '/api/jobs/$id': typeof ApiJobsIdRoute
+  '/api/jobs/sync': typeof ApiJobsSyncRoute
   '/api/public/elevenlabs-call': typeof ApiPublicElevenlabsCallRoute
   '/api/reports/transcripts': typeof ApiReportsTranscriptsRoute
   '/api/analytics/': typeof ApiAnalyticsIndexRoute
@@ -286,6 +385,11 @@ export interface FileRoutesById {
   '/api/calls/$id/recording': typeof ApiCallsIdRecordingRoute
   '/api/calls/$id/status': typeof ApiCallsIdStatusRoute
   '/api/calls/$id/transcript': typeof ApiCallsIdTranscriptRoute
+  '/api/candidates/$id/export': typeof ApiCandidatesIdExportRoute
+  '/api/integrations/microsoft/authorize': typeof ApiIntegrationsMicrosoftAuthorizeRoute
+  '/api/integrations/microsoft/callback': typeof ApiIntegrationsMicrosoftCallbackRoute
+  '/api/integrations/zoho/authorize': typeof ApiIntegrationsZohoAuthorizeRoute
+  '/api/integrations/zoho/callback': typeof ApiIntegrationsZohoCallbackRoute
   '/api/public/calls/webhook': typeof ApiPublicCallsWebhookRoute
 }
 export interface FileRouteTypes {
@@ -306,11 +410,17 @@ export interface FileRouteTypes {
     | '/candidates/$candidateId'
     | '/calls/'
     | '/candidates/'
+    | '/api/analytics/calls'
+    | '/api/analytics/candidates'
     | '/api/calls/initiate'
     | '/api/calls/webhook'
     | '/api/candidates/$id'
+    | '/api/candidates/upload'
+    | '/api/cron/retention'
     | '/api/interviews/$id'
+    | '/api/interviews/availability'
     | '/api/jobs/$id'
+    | '/api/jobs/sync'
     | '/api/public/elevenlabs-call'
     | '/api/reports/transcripts'
     | '/api/analytics/'
@@ -320,6 +430,11 @@ export interface FileRouteTypes {
     | '/api/calls/$id/recording'
     | '/api/calls/$id/status'
     | '/api/calls/$id/transcript'
+    | '/api/candidates/$id/export'
+    | '/api/integrations/microsoft/authorize'
+    | '/api/integrations/microsoft/callback'
+    | '/api/integrations/zoho/authorize'
+    | '/api/integrations/zoho/callback'
     | '/api/public/calls/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -338,11 +453,17 @@ export interface FileRouteTypes {
     | '/candidates/$candidateId'
     | '/calls'
     | '/candidates'
+    | '/api/analytics/calls'
+    | '/api/analytics/candidates'
     | '/api/calls/initiate'
     | '/api/calls/webhook'
     | '/api/candidates/$id'
+    | '/api/candidates/upload'
+    | '/api/cron/retention'
     | '/api/interviews/$id'
+    | '/api/interviews/availability'
     | '/api/jobs/$id'
+    | '/api/jobs/sync'
     | '/api/public/elevenlabs-call'
     | '/api/reports/transcripts'
     | '/api/analytics'
@@ -352,6 +473,11 @@ export interface FileRouteTypes {
     | '/api/calls/$id/recording'
     | '/api/calls/$id/status'
     | '/api/calls/$id/transcript'
+    | '/api/candidates/$id/export'
+    | '/api/integrations/microsoft/authorize'
+    | '/api/integrations/microsoft/callback'
+    | '/api/integrations/zoho/authorize'
+    | '/api/integrations/zoho/callback'
     | '/api/public/calls/webhook'
   id:
     | '__root__'
@@ -370,11 +496,17 @@ export interface FileRouteTypes {
     | '/candidates/$candidateId'
     | '/calls/'
     | '/candidates/'
+    | '/api/analytics/calls'
+    | '/api/analytics/candidates'
     | '/api/calls/initiate'
     | '/api/calls/webhook'
     | '/api/candidates/$id'
+    | '/api/candidates/upload'
+    | '/api/cron/retention'
     | '/api/interviews/$id'
+    | '/api/interviews/availability'
     | '/api/jobs/$id'
+    | '/api/jobs/sync'
     | '/api/public/elevenlabs-call'
     | '/api/reports/transcripts'
     | '/api/analytics/'
@@ -384,6 +516,11 @@ export interface FileRouteTypes {
     | '/api/calls/$id/recording'
     | '/api/calls/$id/status'
     | '/api/calls/$id/transcript'
+    | '/api/candidates/$id/export'
+    | '/api/integrations/microsoft/authorize'
+    | '/api/integrations/microsoft/callback'
+    | '/api/integrations/zoho/authorize'
+    | '/api/integrations/zoho/callback'
     | '/api/public/calls/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -403,11 +540,17 @@ export interface RootRouteChildren {
   CandidatesCandidateIdRoute: typeof CandidatesCandidateIdRoute
   CallsIndexRoute: typeof CallsIndexRoute
   CandidatesIndexRoute: typeof CandidatesIndexRoute
+  ApiAnalyticsCallsRoute: typeof ApiAnalyticsCallsRoute
+  ApiAnalyticsCandidatesRoute: typeof ApiAnalyticsCandidatesRoute
   ApiCallsInitiateRoute: typeof ApiCallsInitiateRoute
   ApiCallsWebhookRoute: typeof ApiCallsWebhookRoute
-  ApiCandidatesIdRoute: typeof ApiCandidatesIdRoute
+  ApiCandidatesIdRoute: typeof ApiCandidatesIdRouteWithChildren
+  ApiCandidatesUploadRoute: typeof ApiCandidatesUploadRoute
+  ApiCronRetentionRoute: typeof ApiCronRetentionRoute
   ApiInterviewsIdRoute: typeof ApiInterviewsIdRoute
+  ApiInterviewsAvailabilityRoute: typeof ApiInterviewsAvailabilityRoute
   ApiJobsIdRoute: typeof ApiJobsIdRoute
+  ApiJobsSyncRoute: typeof ApiJobsSyncRoute
   ApiPublicElevenlabsCallRoute: typeof ApiPublicElevenlabsCallRoute
   ApiReportsTranscriptsRoute: typeof ApiReportsTranscriptsRoute
   ApiAnalyticsIndexRoute: typeof ApiAnalyticsIndexRoute
@@ -417,6 +560,10 @@ export interface RootRouteChildren {
   ApiCallsIdRecordingRoute: typeof ApiCallsIdRecordingRoute
   ApiCallsIdStatusRoute: typeof ApiCallsIdStatusRoute
   ApiCallsIdTranscriptRoute: typeof ApiCallsIdTranscriptRoute
+  ApiIntegrationsMicrosoftAuthorizeRoute: typeof ApiIntegrationsMicrosoftAuthorizeRoute
+  ApiIntegrationsMicrosoftCallbackRoute: typeof ApiIntegrationsMicrosoftCallbackRoute
+  ApiIntegrationsZohoAuthorizeRoute: typeof ApiIntegrationsZohoAuthorizeRoute
+  ApiIntegrationsZohoCallbackRoute: typeof ApiIntegrationsZohoCallbackRoute
   ApiPublicCallsWebhookRoute: typeof ApiPublicCallsWebhookRoute
 }
 
@@ -534,6 +681,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAnalyticsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/analytics/calls': {
+      id: '/api/analytics/calls'
+      path: '/api/analytics/calls'
+      fullPath: '/api/analytics/calls'
+      preLoaderRoute: typeof ApiAnalyticsCallsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/analytics/candidates': {
+      id: '/api/analytics/candidates'
+      path: '/api/analytics/candidates'
+      fullPath: '/api/analytics/candidates'
+      preLoaderRoute: typeof ApiAnalyticsCandidatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/calls/initiate': {
       id: '/api/calls/initiate'
       path: '/api/calls/initiate'
@@ -562,6 +723,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCandidatesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/candidates/upload': {
+      id: '/api/candidates/upload'
+      path: '/api/candidates/upload'
+      fullPath: '/api/candidates/upload'
+      preLoaderRoute: typeof ApiCandidatesUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/cron/retention': {
+      id: '/api/cron/retention'
+      path: '/api/cron/retention'
+      fullPath: '/api/cron/retention'
+      preLoaderRoute: typeof ApiCronRetentionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/interviews/': {
       id: '/api/interviews/'
       path: '/api/interviews'
@@ -576,6 +751,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiInterviewsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/interviews/availability': {
+      id: '/api/interviews/availability'
+      path: '/api/interviews/availability'
+      fullPath: '/api/interviews/availability'
+      preLoaderRoute: typeof ApiInterviewsAvailabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/jobs/': {
       id: '/api/jobs/'
       path: '/api/jobs'
@@ -588,6 +770,13 @@ declare module '@tanstack/react-router' {
       path: '/api/jobs/$id'
       fullPath: '/api/jobs/$id'
       preLoaderRoute: typeof ApiJobsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/jobs/sync': {
+      id: '/api/jobs/sync'
+      path: '/api/jobs/sync'
+      fullPath: '/api/jobs/sync'
+      preLoaderRoute: typeof ApiJobsSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/elevenlabs-call': {
@@ -625,6 +814,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCallsIdTranscriptRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/candidates/$id/export': {
+      id: '/api/candidates/$id/export'
+      path: '/export'
+      fullPath: '/api/candidates/$id/export'
+      preLoaderRoute: typeof ApiCandidatesIdExportRouteImport
+      parentRoute: typeof ApiCandidatesIdRoute
+    }
+    '/api/integrations/microsoft/authorize': {
+      id: '/api/integrations/microsoft/authorize'
+      path: '/api/integrations/microsoft/authorize'
+      fullPath: '/api/integrations/microsoft/authorize'
+      preLoaderRoute: typeof ApiIntegrationsMicrosoftAuthorizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations/microsoft/callback': {
+      id: '/api/integrations/microsoft/callback'
+      path: '/api/integrations/microsoft/callback'
+      fullPath: '/api/integrations/microsoft/callback'
+      preLoaderRoute: typeof ApiIntegrationsMicrosoftCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations/zoho/authorize': {
+      id: '/api/integrations/zoho/authorize'
+      path: '/api/integrations/zoho/authorize'
+      fullPath: '/api/integrations/zoho/authorize'
+      preLoaderRoute: typeof ApiIntegrationsZohoAuthorizeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/integrations/zoho/callback': {
+      id: '/api/integrations/zoho/callback'
+      path: '/api/integrations/zoho/callback'
+      fullPath: '/api/integrations/zoho/callback'
+      preLoaderRoute: typeof ApiIntegrationsZohoCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/calls/webhook': {
       id: '/api/public/calls/webhook'
       path: '/api/public/calls/webhook'
@@ -634,6 +858,18 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface ApiCandidatesIdRouteChildren {
+  ApiCandidatesIdExportRoute: typeof ApiCandidatesIdExportRoute
+}
+
+const ApiCandidatesIdRouteChildren: ApiCandidatesIdRouteChildren = {
+  ApiCandidatesIdExportRoute: ApiCandidatesIdExportRoute,
+}
+
+const ApiCandidatesIdRouteWithChildren = ApiCandidatesIdRoute._addFileChildren(
+  ApiCandidatesIdRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -651,11 +887,17 @@ const rootRouteChildren: RootRouteChildren = {
   CandidatesCandidateIdRoute: CandidatesCandidateIdRoute,
   CallsIndexRoute: CallsIndexRoute,
   CandidatesIndexRoute: CandidatesIndexRoute,
+  ApiAnalyticsCallsRoute: ApiAnalyticsCallsRoute,
+  ApiAnalyticsCandidatesRoute: ApiAnalyticsCandidatesRoute,
   ApiCallsInitiateRoute: ApiCallsInitiateRoute,
   ApiCallsWebhookRoute: ApiCallsWebhookRoute,
-  ApiCandidatesIdRoute: ApiCandidatesIdRoute,
+  ApiCandidatesIdRoute: ApiCandidatesIdRouteWithChildren,
+  ApiCandidatesUploadRoute: ApiCandidatesUploadRoute,
+  ApiCronRetentionRoute: ApiCronRetentionRoute,
   ApiInterviewsIdRoute: ApiInterviewsIdRoute,
+  ApiInterviewsAvailabilityRoute: ApiInterviewsAvailabilityRoute,
   ApiJobsIdRoute: ApiJobsIdRoute,
+  ApiJobsSyncRoute: ApiJobsSyncRoute,
   ApiPublicElevenlabsCallRoute: ApiPublicElevenlabsCallRoute,
   ApiReportsTranscriptsRoute: ApiReportsTranscriptsRoute,
   ApiAnalyticsIndexRoute: ApiAnalyticsIndexRoute,
@@ -665,6 +907,11 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCallsIdRecordingRoute: ApiCallsIdRecordingRoute,
   ApiCallsIdStatusRoute: ApiCallsIdStatusRoute,
   ApiCallsIdTranscriptRoute: ApiCallsIdTranscriptRoute,
+  ApiIntegrationsMicrosoftAuthorizeRoute:
+    ApiIntegrationsMicrosoftAuthorizeRoute,
+  ApiIntegrationsMicrosoftCallbackRoute: ApiIntegrationsMicrosoftCallbackRoute,
+  ApiIntegrationsZohoAuthorizeRoute: ApiIntegrationsZohoAuthorizeRoute,
+  ApiIntegrationsZohoCallbackRoute: ApiIntegrationsZohoCallbackRoute,
   ApiPublicCallsWebhookRoute: ApiPublicCallsWebhookRoute,
 }
 export const routeTree = rootRouteImport

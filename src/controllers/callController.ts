@@ -1,47 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/middleware/auth";
 import { callInput } from "@/utils/validation";
-import { generateCall } from "@/services/openAIService.server";
-import { persistCall } from "@/db/callRepository.server";
 import { placeOutboundCall } from "@/services/elevenLabsService.server";
 import { toDialableNumber } from "@/services/twilioService.server";
-
-export const runAiCall = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((data) => callInput.parse(data))
-  .handler(async ({ data, context }) => {
-    const supabase = context.supabase;
-    const { data: candidate, error } = await supabase
-      .from("candidates")
-      .select("candidate_id, full_name, phone_number, job_id")
-      .eq("candidate_id", data.candidateId)
-      .single();
-    if (error || !candidate) throw new Error("Candidate not found");
-
-    const jobId = data.jobId ?? candidate.job_id ?? null;
-    const job = jobId
-      ? (
-          await supabase
-            .from("jobs")
-            .select("title, company_name, location, salary_range, jd_text")
-            .eq("job_id", jobId)
-            .maybeSingle()
-        ).data
-      : null;
-
-    const parsed = await generateCall({
-      candidate: { full_name: candidate.full_name, phone_number: candidate.phone_number },
-      job,
-      instruction: data.instruction ?? "",
-    });
-
-    return persistCall(supabase, {
-      candidateId: candidate.candidate_id,
-      jobId,
-      parsed,
-      startedAt: new Date(),
-    });
-  });
 
 export const startLiveCall = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

@@ -1,14 +1,11 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
-import { Loader2, Pencil, PhoneCall, PhoneOutgoing, Plus, Trash2, Upload } from "lucide-react";
+import { Loader2, Pencil, PhoneOutgoing, Plus, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "@/components/AppShell";
-import { candidatesQuery, jobsQuery, telephonySettingsQuery } from "@/services/api";
+import { candidatesQuery, jobsQuery } from "@/services/api";
 import { supabase } from "@/integrations/supabase/client";
-import { runAiCall } from "@/controllers/callController";
-import { startLiveCall } from "@/controllers/callController";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -63,17 +60,10 @@ function CandidatesPage() {
   const navigate = useNavigate();
   const candidates = useQuery(candidatesQuery);
   const jobs = useQuery(jobsQuery);
-  const callFn = useServerFn(runAiCall);
-  const liveCallFn = useServerFn(startLiveCall);
-  const telephony = useQuery(telephonySettingsQuery);
-  const liveEnabled = Boolean(
-    telephony.data?.enabled && telephony.data.agent_id && telephony.data.agent_phone_number_id,
-  );
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ full_name: "", phone_number: "", email: "", job_id: "" });
   const [callingId, setCallingId] = useState<string | null>(null);
-  const [dialingId, setDialingId] = useState<string | null>(null);
 
   useEffect(() => {
     const channel = supabase
@@ -91,22 +81,6 @@ function CandidatesPage() {
       void supabase.removeChannel(channel);
     };
   }, [qc]);
-
-  const liveCall = useMutation({
-    mutationFn: async (candidateId: string) => {
-      setDialingId(candidateId);
-      return liveCallFn({ data: { candidateId } });
-    },
-    onSuccess: (res) => {
-      toast.success("Dialing candidate", {
-        description: "The transcript appears here automatically when the call ends.",
-      });
-      qc.invalidateQueries({ queryKey: ["calls"] });
-      navigate({ to: "/calls/$callId", params: { callId: res.call_id } });
-    },
-    onError: (e: Error) => toast.error(e.message || "Could not place the call"),
-    onSettled: () => setDialingId(null),
-  });
 
   const saveCandidate = useMutation({
     mutationFn: async () => {
@@ -154,13 +128,37 @@ function CandidatesPage() {
   const startCall = useMutation({
     mutationFn: async (candidateId: string) => {
       setCallingId(candidateId);
-      return callFn({ data: { candidateId } });
+
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) throw new Error("Your session is no longer valid. Please sign in again.");
+
+      const response = await fetch("/api/calls/initiate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ candidateId }),
+      });
+
+      const payload = (await response.json().catch(() => null)) as
+        | { error?: string; call_id?: string }
+        | null;
+
+      if (!response.ok) {
+        throw new Error(payload?.error || "Call initiation failed");
+      }
+
+      return payload as { call_id: string };
     },
     onSuccess: (res) => {
-      toast.success("Call completed", { description: res.summary });
       qc.invalidateQueries({ queryKey: ["calls"] });
       qc.invalidateQueries({ queryKey: ["candidates"] });
       navigate({ to: "/calls/$callId", params: { callId: res.call_id } });
+      toast.success("Dialing candidate", {
+        description: "The transcript appears here automatically when the call ends.",
+      });
     },
     onError: (e: Error) => toast.error(e.message || "Call failed"),
     onSettled: () => setCallingId(null),
@@ -331,24 +329,10 @@ function CandidatesPage() {
                     {c.status.replace("_", " ")}
                   </TableCell>
                   <TableCell className="space-x-2 text-right whitespace-nowrap">
-                    {liveEnabled && (
-                      <Button
-                        size="sm"
-                        disabled={liveCall.isPending || !c.phone_number}
-                        onClick={() => liveCall.mutate(c.candidate_id)}
-                      >
-                        {dialingId === c.candidate_id ? (
-                          <Loader2 className="size-4 animate-spin" />
-                        ) : (
-                          <PhoneCall className="size-4" />
-                        )}
-                        {dialingId === c.candidate_id ? "Dialing…" : "Live call"}
-                      </Button>
-                    )}
                     <Button
                       size="sm"
                       variant="secondary"
-                      disabled={startCall.isPending}
+                      disabled={startCall.isPending || !c.phone_number}
                       onClick={() => startCall.mutate(c.candidate_id)}
                     >
                       {callingId === c.candidate_id ? (
@@ -356,7 +340,7 @@ function CandidatesPage() {
                       ) : (
                         <PhoneOutgoing className="size-4" />
                       )}
-                      {callingId === c.candidate_id ? "Calling…" : "AI call"}
+                      {callingId === c.candidate_id ? "Calling…" : "Call"}
                     </Button>
                     <Button
                       size="sm"

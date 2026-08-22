@@ -230,6 +230,7 @@ export type Database = {
           ats_synced_at: string | null
           candidate_id: string
           created_at: string
+          consent_given_at: string | null
           email: string | null
           full_name: string
           job_id: string | null
@@ -243,6 +244,7 @@ export type Database = {
           ats_synced_at?: string | null
           candidate_id?: string
           created_at?: string
+          consent_given_at?: string | null
           email?: string | null
           full_name: string
           job_id?: string | null
@@ -256,6 +258,7 @@ export type Database = {
           ats_synced_at?: string | null
           candidate_id?: string
           created_at?: string
+          consent_given_at?: string | null
           email?: string | null
           full_name?: string
           job_id?: string | null
@@ -380,6 +383,7 @@ export type Database = {
           full_name: string
           phone_number: string | null
           recruiter_id: string
+          role: "admin" | "recruiter"
         }
         Insert: {
           company_name?: string | null
@@ -388,6 +392,7 @@ export type Database = {
           full_name: string
           phone_number?: string | null
           recruiter_id?: string
+          role?: "admin" | "recruiter"
         }
         Update: {
           company_name?: string | null
@@ -396,6 +401,7 @@ export type Database = {
           full_name?: string
           phone_number?: string | null
           recruiter_id?: string
+          role?: "admin" | "recruiter"
         }
         Relationships: []
       }

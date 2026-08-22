@@ -5,6 +5,7 @@ import { uuid } from "@/utils/validation";
 import { checkRateLimit, clientKey } from "@/middleware/rateLimiter.server";
 import { preflight, withSecurityHeaders } from "@/middleware/security";
 import { recordAudit, requestMeta } from "@/middleware/audit.server";
+import { requireRole } from "@/middleware/rbac.server";
 
 const bodySchema = z.object({ candidateId: uuid, jobId: uuid.nullable().optional() });
 
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/api/calls/initiate")({
           }
 
           const supabase = await authenticateRequest(request);
+          await requireRole(supabase, ["admin", "recruiter"]);
           const parsed = bodySchema.safeParse(await request.json().catch(() => null));
           if (!parsed.success) {
             return withSecurityHeaders(

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { PhoneCall } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,15 +64,15 @@ function AuthPage() {
   }
 
   async function onGoogle() {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
     });
-    if (result.error) {
+    if (error) {
       toast.error("Google sign-in failed");
-      return;
+      setBusy(false);
     }
-    if (result.redirected) return;
-    navigate({ to: "/" });
   }
 
   return (
@@ -116,7 +115,7 @@ function AuthPage() {
           </Button>
         </form>
 
-        <Button variant="outline" className="mt-3 w-full" onClick={onGoogle}>
+        <Button variant="outline" className="mt-3 w-full" onClick={onGoogle} disabled={busy}>
           Continue with Google
         </Button>
 
